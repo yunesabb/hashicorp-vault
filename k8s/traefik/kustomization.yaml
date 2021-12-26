@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: traefik
+
+patches:
+  - patches/deployment.yaml
+
+resources:
+  - resources/crds.yaml
+  - resources/deploy.yaml
+  - resources/services.yaml
+  - resources/ingressroutes.yaml
+  - resources/config.yaml
+  - secrets/traefik-tls-secret.yaml

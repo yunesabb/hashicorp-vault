@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vault
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`vault-test.local`)
+    kind: Rule
+    services:
+    - kind: Service
+      name: vault
+      port: 8200

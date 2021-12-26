@@ -1,0 +1,28 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-ping
+spec:
+  entryPoints:
+    - traefik
+  routes:
+  - match: Path(`/`) || Path(`/ping`)
+    priority: 1
+    kind: Rule
+    services:
+    - name: ping@internal
+      kind: TraefikService
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-api
+spec:
+  entryPoints:
+    - traefik
+  routes:
+  - match: Host(`traefik-test.local`)
+    kind: Rule
+    services:
+    - name: api@internal
+      kind: TraefikService

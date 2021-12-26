@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-conf
+data:
+  traefik.yml: |
+    global:
+      checkNewVersion: false
+      sendAnonymousUsage: false
+    api:
+      dashboard: true
+    ping: {}
+    tracing:
+      jaeger:
+        samplingServerURL: http://jaeger-agent.jaeger.svc.cluster.local:5778/sampling
+        samplingType: const
+        samplingParam: 1.0
+        localAgentHostPort: jaeger-agent.jaeger.svc.cluster.local:6831
+        propagation: jaeger
+        traceContextHeaderName: uber-trace-id
+    accesslog: {}
+    metrics:
+      prometheus:
+        entryPoint: metrics
+    entryPoints:
+      web:
+        address: ":8000"
+      websecure:
+        address: ":8443"
+      metrics:
+        address: ":8082"
+      traefik:
+        address: ":9000"
+    providers:
+      kubernetesCRD: {}
+      kubernetesIngress: {}
+      file:
+        filename: /etc/traefik/traefik.yml
+        watch: true
+    tls:
+      stores:
+        default:
+          defaultCertificate:
+            certFile: /ssl/tls.crt
+            keyFile: /ssl/tls.key
+      options:
+        default:
+          minVersion: VersionTLS12
+          sniStrict: false
+          cipherSuites:
+            - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+            - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+            - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+            - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+            - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      certificates:
+        - certFile: /ssl/tls.crt
+          keyFile: /ssl/tls.key
+    serverstransport:
+      insecureskipverify: true
